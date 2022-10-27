@@ -22,7 +22,7 @@ export function handleItemSale(event: ItemSold): void {
 
     if (!saleEntity && tx.unmatchedTransferCount > 0) {
       // Assume default value of currency as phony ERC20
-      let currencyAddress: Address = Address.fromString("0xf75150d730ce97c1551e97df39c0a049024e4c25"); //update to DAZ/WETH ERC20
+      let currencyAddress: Address = Address.fromString("0x0039f574ee5cc39bdd162e9a88e3eb1f111baf48"); //update to DAZ/WETH ERC20
 
       // If the transaction value is > 0 then assume the sale occurs in ETH
       if (event.transaction.value != constants.BIGINT_ZERO || event.params.price == constants.BIGINT_ONE) {currencyAddress = Address.fromString(constants.ADDRESS_ZERO)}
