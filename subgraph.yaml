@@ -1,17 +1,61 @@
-specVersion: 0.0.4
+specVersion: 0.0.5
 schema:
   file: ./schema.graphql
 dataSources:
-  #### All ERC721 ####
-  - kind: ethereum/contract
-    name: IERC721
-    network: mainnet
+  - kind: ethereum
+    name: Marketplace
+    network: mumbai
     source:
-      abi: IERC721
-      startBlock: 5280143
+      address: "0xE6B4C2a0640bbd797b3361F79708F1d373eDfF30"
+      abi: Marketplace
+      startBlock: 32871453
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.6
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - SupportedCollection
+        - SaleInfo
+      abis:
+        - name: Marketplace
+          file: ./abis/Marketplace.json
+        - name: IERC721
+          file: ./node_modules/@openzeppelin/contracts/build/contracts/IERC721.json
+        - name: IERC721Metadata
+          file: ./node_modules/@openzeppelin/contracts/build/contracts/IERC721Metadata.json
+        - name: Contract721
+          file: ./abis/Contract721.json
+      eventHandlers:
+        - event: CollectionAdded(indexed address,indexed address,uint256,uint8)
+          handler: handleCollectionAdded
+        - event: CollectionRemoved(address)
+          handler: handleCollectionRemoved
+        - event: CollectionUnverify(indexed address,indexed uint8)
+          handler: handleCollectionUnverify
+        - event: CollectionUpdated(indexed address,indexed address,uint256,indexed uint8)
+          handler: handleCollectionUpdated
+        - event: CollectionVerify(indexed address,indexed uint8)
+          handler: handleCollectionVerify
+        - event: ItemDelisted(indexed address,indexed uint32,indexed address)
+          handler: handleItemDelisted
+        - event: ItemListed(indexed address,indexed uint32,uint256,indexed address)
+          handler: handleItemListed
+        - event: ItemSold(indexed address,indexed address,uint32,uint256,indexed address)
+          handler: handleItemSold
+        - event: ItemUpdated(indexed address,indexed uint32,uint256,indexed address)
+          handler: handleItemUpdated
+        - event: RevenueWithdrawn(indexed address,indexed uint256)
+          handler: handleRevenueWithdrawn
+      file: ./src/contracts/marketplace.ts
+  - kind: ethereum
+    name: IERC721
+    network: mumbai
+    source:
+      abi: IERC721
+      startBlock: 32871453
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
         - transfer
@@ -27,29 +71,97 @@ dataSources:
       eventHandlers:
         - event: Transfer(indexed address,indexed address,indexed uint256)
           handler: handleTransfer
+        - event: Approval(indexed address,indexed address,indexed uint256)
+          handler: handleApproval
+        - event: ApprovalForAll(indexed address,indexed address,bool)
+          handler: handleApprovalForAll
       file: ./src/eip721/index.ts
-    #### Marketplace Contracts ####
   - kind: ethereum
-    name: Contract
-    network: mainnet
+    name: WETH
+    network: mumbai
     source:
-      address: "0xa3c32c5f83d1669038baada2b17db84c7bb15cef"
-      abi: Contract
-      startBlock: 28217454
+      address: "0x69567cffe9918dbef4cd24b30fddce4c13389dcf"
+      abi: ERC20Abi
+      startBlock: 32871453
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.6
+      apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
-        - collection
-        - token
-        - sale
+        - wethTransaction
       abis:
-        - name: Contract
-          file: ./abis/Contract.json
-        - name: ERC20
-          file: ./node_modules/@openzeppelin/contracts/build/contracts/ERC20.json
+        - name: ERC20Abi
+          file: ./abis/ERC20Abi.json
       eventHandlers:
-        - event: ItemSold(indexed address,indexed address,indexed uint32,uint256)
-          handler: handleItemSale
-      file: ./src/marketplaces/mARTMapping.ts
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/utils/wethUtil.ts
+  - kind: ethereum
+    name: Offers
+    network: mumbai
+    source:
+      address: "0x51F349056f7c4D234E60e3B347a12B9ad5f84C17"
+      abi: Offers
+      startBlock: 32871453
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - CollectionOffer
+        - CollectionsTokenOffer
+      abis:
+        - name: Offers
+          file: ./abis/Offers.json
+        - name: IERC721
+          file: ./node_modules/@openzeppelin/contracts/build/contracts/IERC721.json
+        - name: IERC721Metadata
+          file: ./node_modules/@openzeppelin/contracts/build/contracts/IERC721Metadata.json
+        - name: Contract721
+          file: ./abis/Contract721.json
+      eventHandlers:
+        - event: CollectionOfferAccepted(indexed address,indexed address,indexed address,uint256,uint256)
+          handler: handleCollectionOfferAccepted
+        - event: CollectionOfferCreated(indexed address,indexed address,indexed uint256,uint256,uint256)
+          handler: handleCollectionOfferCreated
+        - event: CollectionOfferDeleted(indexed address,indexed address,indexed uint256)
+          handler: handleCollectionOfferDeleted
+        - event: OfferAccepted(indexed address,indexed address,indexed address,uint256,uint256)
+          handler: handleOfferAccepted
+        - event: OfferCancelled(indexed address,address,indexed address,indexed uint256)
+          handler: handleOfferCancelled
+        - event: OfferCreated(indexed address,indexed address,uint256,indexed address,uint256,uint256)
+          handler: handleOfferCreated
+        - event: OfferUpdated(indexed address,indexed address,uint256,indexed address,uint256,uint256)
+          handler: handleOfferUpdated
+      file: ./src/contracts/offers.ts
+  - kind: ethereum
+    name: Auction
+    network: mumbai
+    source:
+      address: "0xc97F99411316C441fd4f524c02A78836Fc075E1E"
+      abi: Auction
+      startBlock: 32871453
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - BidAccepted
+      abis:
+        - name: Auction
+          file: ./abis/Auction.json
+      eventHandlers:
+        - event: AuctionCancelled(indexed address,indexed address,indexed uint256)
+          handler: handleAuctionCancelled
+        - event: AuctionStarted(indexed address,indexed address,indexed uint256,uint256,uint256)
+          handler: handleAuctionStarted
+        - event: BidAccepted(address,indexed address,uint256,indexed address,indexed uint256)
+          handler: handleBidAccepted
+        - event: BidCancelled(indexed address,indexed address,indexed uint256,uint256)
+          handler: handleBidCancelled
+        - event: BidCreated(indexed address,indexed address,indexed uint256,uint256)
+          handler: handleBidCreated
+      file: ./src/contracts/auction.ts
+features:
+  - fullTextSearch

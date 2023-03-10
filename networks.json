@@ -1,7 +1,8 @@
 {
-  "mainnet": {
-    "Contract": {
-      "address": "0x36be5c1f3a3a5b4c168c584a628a6c04ccfc54e1"
+  "mumbai": {
+    "Marketplace": {
+      "address": "0xE6B4C2a0640bbd797b3361F79708F1d373eDfF30",
+      "startBlock": 28217454
     }
   }
 }

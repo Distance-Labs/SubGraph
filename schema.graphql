@@ -1,3 +1,127 @@
+type SupportedCollection @entity {
+  " the ID is supportedcollection and collection address "
+  id: ID!
+
+  " Collection fee revenue collector "
+  feeCollector: Bytes!
+
+  " The trading fee for the collection "
+  royaltyFees: BigInt!
+
+  " Collection verification status "
+  verificationStatus: Int!
+
+  " The collection address "
+  collection: collection!
+}
+
+type ApprovedForAll @entity {
+  " the ID is approvedforall, collection address and owner address "
+  id: ID!
+
+  " The collection address this account has approved for all "
+  collection: collection!
+
+  " The account that approved all nfts in this collection to marketplace "
+  account: account!
+
+  " The approval status "
+  approved: Boolean
+}
+
+type SaleInfo @entity {
+  " The ID is the concatenation of the saleinfo, collection address, and token ID "
+  id: ID!
+
+  " The collection address for the sale "
+  collection: collection!
+
+  " The token ID involved in the sale "
+  tokenId: token!
+
+  " The seller of the token "
+  seller: account!
+
+  " The price of the token "
+  salePrice: BigInt
+
+  " The state of the sale; fixedSale, auctionSale and none "
+  state: String!
+
+  " The starting bid for the auction if sale is an auction "
+  startingBid: BigInt
+
+  " The highest bid and current for the auction "
+  highestBid: BigInt
+
+  " The highest bidder for the auction "
+  highestBidder: account
+
+  " The time the auction ends "
+  validity: BigInt
+
+  " The token is approved, for fixedSale only "
+  approved: Boolean
+
+  " The time the auction was created "
+  blockTimestamp: BigInt!
+
+  " The transaction hash for the sale "
+  transactionHash: Bytes!
+}
+
+type CollectionOffer @entity {
+  " The ID is the concatenation of the collectionoffers, collection address and the offer creator "
+  id: ID!
+
+  " The collection address for the offer "
+  collection: collection!
+
+  " The offer creator "
+  creator: account!
+
+  " The offer amount/value "
+  amount: BigInt!
+
+  " The total count of nfts the Offer creator is offering to buy "
+  total: BigInt!
+
+  " The validity period of the offer "
+  validity: BigInt
+
+  " The time the offer was created "
+  blockTimestamp: BigInt!
+
+  " The transaction hash for the offer "
+  transactionHash: Bytes!
+}
+
+type CollectionsTokenOffer @entity {
+  " The ID is the concatenation of the collectionstokenoffers, collection address, and tokenId "
+  id: ID!
+
+  " The collection address for the offer "
+  collection: collection!
+
+  " The offer creator "
+  creator: account!
+
+  " The token ID involved in the offer "
+  tokenId: token!
+
+  " The offer amount/value "
+  value: BigInt!
+
+  " The validity period of the offer "
+  validity: BigInt
+
+  " The time the offer was created "
+  blockTimestamp: BigInt!
+
+  " The transaction hash for the offer "
+  transactionHash: Bytes!
+}
+
 type contract @entity {
   id: ID!
   asERC721: collection
@@ -10,17 +134,41 @@ type account @entity {
   " The NFTs owned by this account "
   tokens: [token!]! @derivedFrom(field: "owner")
 
+  " The points earned by this account "
+  points: Int!
+
+  " The total volume of sales for this account "
+  totalVolume: BigInt!
+
+  " The total sales for this account "
+  totalSales: Int!
+
+  " The total revenue generated for this account "
+  revenue: BigInt!
+
   " The transfers originating from this account "
-  transfersFrom: [transfer!]! @derivedFrom(field: "senderAddress")
+  transfersFrom: [transfer!] @derivedFrom(field: "senderAddress")
 
   " The transfers recevied by this account"
-  transfersTo: [transfer!]! @derivedFrom(field: "receiverAddress")
+  transfersTo: [transfer!] @derivedFrom(field: "receiverAddress")
 
   " M:M relationship for Accounts and Collections "
-  accountCollection: [accountCollection!]! @derivedFrom(field: "account")
+  accountCollection: [accountCollection!] @derivedFrom(field: "account")
+
+  " Tokens on sale for account"
+  saleInfo: [SaleInfo!] @derivedFrom(field: "seller")
+
+  " Tokens bidded by account"
+  bids: [SaleInfo!] @derivedFrom(field: "highestBidder")
+
+  " Marketplace is approved to spend all this account nfts for a collection "
+  approved: [ApprovedForAll!] @derivedFrom(field: "account")
+
+  collectionOffers: [CollectionOffer!] @derivedFrom(field: "creator")
+
+  tokenCollectionOffers: [CollectionsTokenOffer!] @derivedFrom(field: "creator")
 }
 
-"replaces TokenRegistry"
 type collection @entity {
   " The address of the collection "
   id: ID!
@@ -34,11 +182,19 @@ type collection @entity {
   " Total Supply of Tokens "
   totalSupply: BigInt
 
+  " Total Value locked for offers "
+  TVL: BigInt!
+
   " Mint Price "
   mintPrice: BigDecimal
 
   " Tokens for the collection"
   tokens: [token!]! @derivedFrom(field: "collection")
+
+  " Tokens in the collection for sale"
+  saleInfo: [SaleInfo!] @derivedFrom(field: "collection")
+
+  collectionOffers: [CollectionOffer!] @derivedFrom(field: "collection")
 
   " Collection supports metadata "
   supportsMetadata: Boolean
@@ -69,7 +225,7 @@ type collection @entity {
 }
 
 type token @entity {
-  " Ethereum / Collection Addrress - Token Id "
+  " kcc / Collection Addrress - Token Id "
   id: ID!
 
   " The collection address "
@@ -79,13 +235,21 @@ type token @entity {
   identifier: BigInt!
 
   " The token URI "
-  tokenURI: String
+  tokenURI: String!
 
-  " The address the currently owns the token "
+  " Used to track last fetched time for token metadata "
+  updatedAtTimestamp: BigInt!
+
+  " Token ID / identifier but as a string for fullTextSearch "
+  tokenId: String!
+
+  " The address that currently owns the token "
   owner: account
 
   " Transfers involving this token "
   transfers: [transfer!]! @derivedFrom(field: "token")
+
+  saleInfo: SaleInfo @derivedFrom(field: "tokenId")
 }
 
 type accountCollection @entity {
@@ -153,7 +317,7 @@ type transfer @entity {
   " Block Number "
   blockNumber: Int!
 
-  " The amount of ETH/DAZ paid"
+  " The amount of KCS/WKCS paid"
   amount: BigDecimal!
 
   " matched sale event for the transfer "
@@ -179,8 +343,8 @@ type sale @entity {
   " the amount of the sale "
   amount: BigDecimal!
 
-  " The marketplace "
-  platform: String
+  " The sale type "
+  strategy: String
 }
 
 type currency @entity {
@@ -276,3 +440,18 @@ type wethTransaction @entity {
   " Hash for weth contained transaction "
   id: ID!
 }
+
+type _Schema_
+  @fulltext(
+    name: "marketSearch"
+    language: en
+    algorithm: rank
+    include: [
+      { entity: "token", fields: [{ name: "tokenId" }] }
+      { entity: "account", fields: [{ name: "id" }] }
+      {
+        entity: "collection"
+        fields: [{ name: "id", name: "name", name: "symbol" }]
+      }
+    ]
+  )
