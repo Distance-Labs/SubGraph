@@ -5,7 +5,7 @@ import {
   BidAccepted as BidAcceptedEvent,
   BidCreated as BidCreatedEvent,
 } from "../../generated/Auction/Auction";
-import { account, SaleInfo } from "../../generated/schema";
+import { SaleInfo } from "../../generated/schema";
 import { fetchAccount } from "../utils/erc721";
 import { updateAuction } from "./auctionUtils";
 

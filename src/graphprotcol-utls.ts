@@ -23,10 +23,10 @@ export namespace constants {
   export const ADDRESS_ZERO = "0x0000000000000000000000000000000000000000";
   export const BYTES32_ZERO =
     "0x0000000000000000000000000000000000000000000000000000000000000000";
-  export const Marketplace = "0xe6b4c2a0640bbd797b3361f79708f1d373edff30";
-  export const OfferHouse = "0x51f349056f7c4d234e60e3b347a12b9ad5f84c17";
-  export const Auction = "0xc97f99411316c441fd4f524c02a78836fc075e1e";
-  export const WKCS = "0x69567cffe9918dbef4cd24b30fddce4c13389dcf";
+  export const Marketplace = "0xae19bb9e268b718069f7447e625418cbc6206653";
+  export const OfferHouse = "0x0eae4853b1fbc15b2f7d8c30ef1df7d243e1f5c8";
+  export const Auction = "0x5c9a09a0143169d36e5de40aa30baae34e476e35";
+  export const WKCS = "0x4446fc4eb47f2f6586f9faab68b3498f86c07521";
 }
 
 export namespace transactions {

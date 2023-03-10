@@ -90,8 +90,10 @@ export function fetchToken(
 }
 
 export function fetchAccount(address: Address): account {
-  let accountEntity = account.load(address.toHexString());
-  if (accountEntity == null) {
+  let addressAccount = address.toHexString();
+  let accountEntity = account.load(addressAccount);
+
+  if (accountEntity == null && addressAccount != constants.ADDRESS_ZERO) {
     accountEntity = new account(address.toHexString());
     accountEntity.points = 0;
     accountEntity.totalVolume = constants.BIGINT_ZERO;

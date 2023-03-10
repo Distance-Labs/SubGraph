@@ -135,16 +135,16 @@ type account @entity {
   tokens: [token!]! @derivedFrom(field: "owner")
 
   " The points earned by this account "
-  points: Int!
+  points: Int
 
   " The total volume of sales for this account "
-  totalVolume: BigInt!
+  totalVolume: BigInt
 
   " The total sales for this account "
-  totalSales: Int!
+  totalSales: Int
 
   " The total revenue generated for this account "
-  revenue: BigInt!
+  revenue: BigInt
 
   " The transfers originating from this account "
   transfersFrom: [transfer!] @derivedFrom(field: "senderAddress")

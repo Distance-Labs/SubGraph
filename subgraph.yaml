@@ -1,4 +1,4 @@
-specVersion: 0.0.5
+specVersion: 0.0.4
 schema:
   file: ./schema.graphql
 dataSources:
@@ -11,7 +11,7 @@ dataSources:
       startBlock: 32871453
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.7
+      apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
         - SupportedCollection
@@ -55,7 +55,7 @@ dataSources:
       startBlock: 32871453
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.7
+      apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
         - transfer
@@ -85,7 +85,7 @@ dataSources:
       startBlock: 32871453
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.7
+      apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
         - wethTransaction
@@ -105,7 +105,7 @@ dataSources:
       startBlock: 32871453
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.7
+      apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
         - CollectionOffer
@@ -144,7 +144,7 @@ dataSources:
       startBlock: 32871453
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.7
+      apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
         - BidAccepted
