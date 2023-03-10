@@ -1,8 +1,8 @@
 {
-  "mumbai": {
+  "mainnet": {
     "Marketplace": {
-      "address": "0xE6B4C2a0640bbd797b3361F79708F1d373eDfF30",
-      "startBlock": 28217454
+      "address": "0xae19bb9e268b718069f7447e625418cbc6206653",
+      "startBlock": 5280143
     }
   }
 }
