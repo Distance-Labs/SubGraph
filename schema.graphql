@@ -250,6 +250,8 @@ type token @entity {
   transfers: [transfer!]! @derivedFrom(field: "token")
 
   saleInfo: SaleInfo @derivedFrom(field: "tokenId")
+
+  offers: [CollectionsTokenOffer!] @derivedFrom(field: "tokenId")
 }
 
 type accountCollection @entity {
