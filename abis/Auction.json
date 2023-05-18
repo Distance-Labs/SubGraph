@@ -13,7 +13,7 @@
       },
       {
         "internalType": "address",
-        "name": "_void",
+        "name": "_Marketplace",
         "type": "address"
       }
     ],
@@ -26,14 +26,30 @@
     "type": "error"
   },
   {
-    "anonymous": false,
     "inputs": [
       {
-        "indexed": true,
+        "internalType": "uint256",
+        "name": "price",
+        "type": "uint256"
+      }
+    ],
+    "name": "InvalidPrice",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
-        "name": "creator",
+        "name": "caller",
         "type": "address"
-      },
+      }
+    ],
+    "name": "UnauthorizedAction",
+    "type": "error"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
       {
         "indexed": true,
         "internalType": "address",
@@ -41,7 +57,7 @@
         "type": "address"
       },
       {
-        "indexed": true,
+        "indexed": false,
         "internalType": "uint256",
         "name": "tokenId",
         "type": "uint256"
@@ -56,7 +72,7 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "creator",
+        "name": "seller",
         "type": "address"
       },
       {
@@ -66,7 +82,7 @@
         "type": "address"
       },
       {
-        "indexed": true,
+        "indexed": false,
         "internalType": "uint256",
         "name": "tokenId",
         "type": "uint256"
@@ -91,15 +107,21 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "address",
-        "name": "owner",
+        "name": "seller",
         "type": "address"
       },
       {
         "indexed": true,
         "internalType": "address",
-        "name": "bidder",
+        "name": "buyer",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "collection",
         "type": "address"
       },
       {
@@ -109,13 +131,7 @@
         "type": "uint256"
       },
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "collection",
-        "type": "address"
-      },
-      {
-        "indexed": true,
+        "indexed": false,
         "internalType": "uint256",
         "name": "tokenId",
         "type": "uint256"
@@ -140,38 +156,7 @@
         "type": "address"
       },
       {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      },
-      {
         "indexed": false,
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "BidCancelled",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "bidder",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "collection",
-        "type": "address"
-      },
-      {
-        "indexed": true,
         "internalType": "uint256",
         "name": "tokenId",
         "type": "uint256"
@@ -192,17 +177,23 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "collectionAddress",
+        "name": "bidder",
         "type": "address"
       },
       {
         "indexed": true,
+        "internalType": "address",
+        "name": "collection",
+        "type": "address"
+      },
+      {
+        "indexed": false,
         "internalType": "uint256",
         "name": "tokenId",
         "type": "uint256"
       }
     ],
-    "name": "NFTRecovery",
+    "name": "BidLost",
     "type": "event"
   },
   {
@@ -241,19 +232,13 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "tokenAddress",
-        "type": "address"
-      },
-      {
-        "indexed": true,
+        "indexed": false,
         "internalType": "uint256",
-        "name": "amount",
+        "name": "fees",
         "type": "uint256"
       }
     ],
-    "name": "TokenRecovery",
+    "name": "TradeFeeUpdated",
     "type": "event"
   },
   {
@@ -271,10 +256,10 @@
   },
   {
     "inputs": [],
-    "name": "VOID",
+    "name": "Marketplace",
     "outputs": [
       {
-        "internalType": "contract IVoid",
+        "internalType": "contract IMarketplace",
         "name": "",
         "type": "address"
       }
@@ -322,19 +307,6 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "_void",
-        "type": "address"
-      }
-    ],
-    "name": "changeVoidAddress",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
         "name": "_collection",
         "type": "address"
       },
@@ -350,7 +322,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "_endingTime",
+        "name": "_auctionExpiry",
         "type": "uint256"
       }
     ],
@@ -423,16 +395,6 @@
             "type": "address"
           },
           {
-            "internalType": "address",
-            "name": "collection",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "tokenId",
-            "type": "uint256"
-          },
-          {
             "internalType": "uint256",
             "name": "highestBid",
             "type": "uint256"
@@ -449,30 +411,8 @@
           },
           {
             "internalType": "uint256",
-            "name": "endTime",
+            "name": "validity",
             "type": "uint256"
-          },
-          {
-            "internalType": "enum AuctionHouse.AuctionState",
-            "name": "state",
-            "type": "uint8"
-          },
-          {
-            "components": [
-              {
-                "internalType": "address",
-                "name": "bidder",
-                "type": "address"
-              },
-              {
-                "internalType": "uint256",
-                "name": "bidAmount",
-                "type": "uint256"
-              }
-            ],
-            "internalType": "struct AuctionHouse.Bid[]",
-            "name": "bids",
-            "type": "tuple[]"
           }
         ],
         "internalType": "struct AuctionHouse.Auction",
@@ -501,16 +441,6 @@
             "type": "address"
           },
           {
-            "internalType": "address",
-            "name": "collection",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "tokenId",
-            "type": "uint256"
-          },
-          {
             "internalType": "uint256",
             "name": "highestBid",
             "type": "uint256"
@@ -527,30 +457,8 @@
           },
           {
             "internalType": "uint256",
-            "name": "endTime",
+            "name": "validity",
             "type": "uint256"
-          },
-          {
-            "internalType": "enum AuctionHouse.AuctionState",
-            "name": "state",
-            "type": "uint8"
-          },
-          {
-            "components": [
-              {
-                "internalType": "address",
-                "name": "bidder",
-                "type": "address"
-              },
-              {
-                "internalType": "uint256",
-                "name": "bidAmount",
-                "type": "uint256"
-              }
-            ],
-            "internalType": "struct AuctionHouse.Bid[]",
-            "name": "bids",
-            "type": "tuple[]"
           }
         ],
         "internalType": "struct AuctionHouse.Auction[]",
@@ -652,11 +560,6 @@
         "internalType": "address",
         "name": "_token",
         "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_amount",
-        "type": "uint256"
       }
     ],
     "name": "recoverToken",
@@ -700,6 +603,19 @@
       }
     ],
     "name": "updateAdmin",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_Marketplace",
+        "type": "address"
+      }
+    ],
+    "name": "updateMarketplaceAddress",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
